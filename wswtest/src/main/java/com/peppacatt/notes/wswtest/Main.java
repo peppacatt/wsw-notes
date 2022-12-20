@@ -1,4 +1,4 @@
-package com.peppacatt.notes;
+package com.peppacatt.notes.wswtest;
 
 public class Main {
     public static void main(String[] args) {
