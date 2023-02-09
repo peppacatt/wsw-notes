@@ -1,6 +1,8 @@
 package com.peppacatt.test.springboottest.controller.vx;
 
 import cn.hutool.core.util.StrUtil;
+import com.peppacatt.test.springboottest.vo.TextMsg;
+import com.thoughtworks.xstream.XStream;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -127,5 +129,52 @@ public class VxController {
         }
         LOGGER.info("a plain message was received: {}", map);
         return "";
+    }
+
+    @PostMapping("/plainMsgV2")
+    public String plainMsgV2(HttpServletRequest httpServletRequest) {
+        LOGGER.info("接受普通消息, 封装到map中");
+        Map<String, String> map = new HashMap<>();
+        try {
+            ServletInputStream servletInputStream = httpServletRequest.getInputStream();
+            SAXReader saxReader = new SAXReader();
+            // 读取request输入流, 获得Document对象
+            Document document = saxReader.read(servletInputStream);
+            // 获得root节点
+            Element rootElement = document.getRootElement();
+            // 获取所有子节点
+            for (Element element : rootElement.elements()) {
+                map.put(element.getName(), element.getStringValue());
+            }
+        } catch (IOException e) {
+            LOGGER.error("ServletInputStream: {}", e.getMessage());
+        } catch (DocumentException e) {
+            LOGGER.error("Document: {}", e.getMessage());
+        }
+        LOGGER.info("a plain message was received: {}", map);
+
+        // 被动回复用户消息
+        return getReplyMsg(map);
+    }
+
+    /**
+     * 封装返回的消息
+     *
+     * @param map map
+     * @return String
+     */
+    private String getReplyMsg(Map<String, String> map) {
+        TextMsg textMsg = new TextMsg();
+        textMsg.setToUserName(map.get("FromUserName"));
+        textMsg.setToUserName(map.get("ToUserName"));
+        textMsg.setMsgType("text");
+        textMsg.setContent("hello hello hello");
+        textMsg.setCreateTime(System.currentTimeMillis() / 1000);
+
+        // Xstream将Java对象转为xml字符串
+        XStream xStream = new XStream();
+        // 下面的用法需要在TextMsg类上添加注解
+        xStream.processAnnotations(TextMsg.class);
+        return xStream.toXML(textMsg);
     }
 }
