@@ -8,5 +8,13 @@
     <artifactId>wswtest</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-
+    <dependencies>
+        <!-- hutool工具包 -->
+        <!-- https://mvnrepository.com/artifact/cn.hutool/hutool-all -->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.8.11</version>
+        </dependency>
+    </dependencies>
 </project>
