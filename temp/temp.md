@@ -1,2 +1,1 @@
-mysql图形化工具使用
-idea升级
+mysql目录结构
