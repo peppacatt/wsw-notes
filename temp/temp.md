@@ -1,3 +1,3 @@
 mysql
-mysql高级
+mysql远程连接
 习惯概论
