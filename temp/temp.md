@@ -1,3 +1,3 @@
 mysql
-mysql远程连接
+mysql逻辑架构
 习惯概论
