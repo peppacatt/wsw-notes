@@ -1,4 +1,4 @@
-package com.peppacatt.test.springboottest.mytest.mockito;
+package com.peppacatt.test.springboottest.mytest.mydt;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +17,19 @@ class DemoTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    void add7() {
+        Assertions.assertEquals(5, demo.add(2, 3));
+    }
+
+    @Test
+    void add6() {
+        Demo demo = Mockito.mock(Demo.class);
+        Demo demo1 = Mockito.spy(new Demo());
+        System.out.println(demo.add(2, 3));
+        System.out.println(demo1.add(2, 3));
     }
 
     @Test

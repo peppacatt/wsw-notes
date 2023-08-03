@@ -1,3 +1,47 @@
+# 0 JUnit
+
+单元测试的版本差异
+
+Junit4
+
+```java
+import org.junit.Test;
+import org.junit.runner.RunWith;
+```
+
+
+
+JUnit5
+
+```java
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+```
+
+
+
+## 0.0 注解的区别
+
+| 特征                             | JUNIT 4        | JUNIT 5        |
+| :------------------------------- | :------------- | :------------- |
+| 声明一种测试方法                 | `@Test`        | `@Test`        |
+| 在当前类中的所有测试方法之前执行 | `@BeforeClass` | `@BeforeAll`   |
+| 在当前类中的所有测试方法之后执行 | `@AfterClass`  | `@AfterAll`    |
+| 在每个测试方法之前执行           | `@Before`      | `@BeforeEach`  |
+| 每种测试方法后执行               | `@After`       | `@AfterEach`   |
+| 禁用测试方法/类                  | `@Ignore`      | `@Disabled`    |
+| 测试工厂进行动态测试             | NA             | `@TestFactory` |
+| 嵌套测试                         | NA             | `@Nested`      |
+| 标记和过滤                       | `@Category`    | `@Tag`         |
+| 注册自定义扩展                   | NA             | `@ExtendWith`  |
+
+## 0.1 断言的区别
+
+在Junit 4中，org.junit.Assert具有所有断言方法来验证预期结果和结果。
+
+在JUnit 5中，org.junit.jupiter.Assertions包含大多数断言方法
+
 # 1 什么是mock
 
 Mock可以理解为模拟出一个虚假的对象在测试环境中用来替换掉真实的对象,以达到:
@@ -30,9 +74,7 @@ Mock可以理解为模拟出一个虚假的对象在测试环境中用来替换�
 
 使用@Mock注解
 
-@Mock注解需要搭配MockitoAnnotations.openMocks(testClass)方法一起使用，不然会报错
-
-可以将该方法放到@Before修饰的方法中，在执行每个方法之前都会执行该方法
+使用该注解时，要使用MockitoAnnotations.openMocks()方法，让注解生效, 比如放在@Before方法中初始化。
 
 ```java
     @Mock
@@ -49,6 +91,23 @@ Mock可以理解为模拟出一个虚假的对象在测试环境中用来替换�
         Assertions.assertEquals(17, secureRandom.nextInt());
     }
 ```
+比较优雅优雅的写法是用MockitoJUnitRunner，它可以自动执行MockitoAnnotations.openMocks方法。
+
+```java
+@RunWith(MockitoJUnitRunner.class)
+public class Demo1Test {
+    @Spy
+    Demo demo;
+
+    @Test
+    public void test() {
+        Assertions.assertEquals(5, demo.add(2, 3));
+    }
+
+}
+```
+
+
 
 ### 2.1.2 spy
 
@@ -76,6 +135,85 @@ spy和mock的不同：
 
     }
 ```
+
+### 2.1.3 InjectMocks
+
+**@InjectMocks：创建一个实例，简单的说是这个Mock可以调用真实代码的方法，其余用@Mock（或@Spy）注解创建的mock将被注入到用该实例中。**
+
+示例:
+
+类InjectMockDao
+
+```java
+package com.peppacatt.test.springboottest.mytest.mydt;
+
+import org.springframework.stereotype.Component;
+
+@Component
+public class InjectMockDao {
+    public String myName() {
+        return "dao";
+    }
+}
+
+```
+类InjectMockService
+```java
+package com.peppacatt.test.springboottest.mytest.mydt;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class InjectMockService {
+    @Autowired
+    InjectMockDao injectMockDao;
+
+    public String myName() {
+        return injectMockDao.myName();
+    }
+}
+
+```
+
+测试类
+
+```java
+package com.peppacatt.test.springboottest.mytest.mydt;
+
+import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mockito;
+import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
+
+@RunWith(MockitoJUnitRunner.class)
+public class InjectMockTest {
+
+    // 如果这里用spy,那么调用injectMockService.myName()会报空指针,因为该方法调了injectMockDao的方法,但是injectMockDao未注入
+//    @Spy
+    // 这里用InjectMocks,那么调用injectMockService.myName()会正常执行,因为用@Mock（或@Spy）注解创建的mock将被注入到用该实例中。
+    @InjectMocks
+    InjectMockService injectMockService;
+
+    @Spy
+    InjectMockDao injectMockDao;
+
+    @Test
+    public void test() {
+        Assertions.assertEquals("dao", injectMockDao.myName());
+//        Mockito.when(injectMockDao.myName()).thenReturn("service");
+        Assertions.assertEquals("dao", injectMockService.myName());
+    }
+}
+
+```
+
+
+
+
 
 
 
@@ -125,7 +263,42 @@ spy和mock的对象都可以进行打桩
     }
 ```
 
+### 2.2.4 mock静态方法
 
+Mockito从3.4.0开始可以mock静态方法(之前需要借助PowerMock来实现)，但是需要将原来的mockito-core依赖更换为mockito-inline
+
+```xml
+        <!-- https://mvnrepository.com/artifact/org.mockito/mockito-inline -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-inline</artifactId>
+            <version>5.2.0</version>
+            <scope>test</scope>
+        </dependency>
+```
+
+mock静态对象之后需要关闭,使用try-with-resource
+
+```java
+    @Test
+    public void test() {
+        try (MockedStatic<Demo> demo = Mockito.mockStatic(Demo.class)) {
+            Mockito.when(Demo.getStr("demo")).thenReturn("o");
+            Assertions.assertEquals("o", Demo.getStr("demo"));
+        }
+    }
+```
+
+如果没有引入mockito-inline依赖就直接mock静态方法的话会报如下错误
+
+```
+org.mockito.exceptions.base.MockitoException: 
+The used MockMaker SubclassByteBuddyMockMaker does not support the creation of static mocks
+
+Mockito's inline mock maker supports static mocks based on the Instrumentation API.
+You can simply enable this mock mode, by placing the 'mockito-inline' artifact where you are currently using 'mockito-core'.
+Note that Mockito's inline mock maker is not supported on Android.
+```
 
 
 
