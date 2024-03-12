@@ -1,5 +1,7 @@
 package com.peppacatt.notes.springboottest.tool;
 
+import java.util.Random;
+
 public class MajiangUtil {
     /**
      * 麻将
@@ -45,13 +47,67 @@ public class MajiangUtil {
     }
 
     /**
+     * 获取一个1到13中的数字
+     *
+     * @return 获取一个1到9中的数字
+     */
+    private int getNumOf9() {
+        return (int) (Math.random() * 9) + 1;
+    }
+
+    /**
      * 清一色
      */
     public static void oneColorListen() {
-        int len = (int) (Math.random() * 13 + 1);
-        int[] mjNums = new int[len];
+        int len = (int) (Math.random() * 13) + 2;
+    }
+
+    /**
+     * 1对将牌:11
+     *
+     * @return 1对将牌
+     */
+    private int[] da2jiang() {
+        int num = getNumOf9();
+        return new int[]{num, num};
+    }
+
+    /**
+     * 1坎牌:111
+     *
+     * @return 1坎牌
+     */
+    private int[] da3equal() {
+        int num = getNumOf9();
+        return new int[]{num, num, num};
+    }
+
+    /**
+     * 3个连续的牌:123
+     *
+     * @return 3个连续的牌
+     */
+    private int[] da3Sequence() {
+        int num = getNumOf9();
+        int[] nums = new int[3];
+        for (int i = 0; i < 3; i++) {
+            if (num + 3 > 13) {
+                nums[i] = num - i;
+            } else {
+                nums[i] = num + i;
+            }
+        }
+        return nums;
+    }
+
+    /**
+     * 生成一幅牌
+     */
+    private void combination(int len) {
 
     }
 
-//    private da2
+    private void winValidator(int[] cards) {
+
+    }
 }
