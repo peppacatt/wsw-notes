@@ -7,5 +7,4 @@ dubbo使用场景
 ---
 链表
 ---
-spider
-selenium
+scrapy
