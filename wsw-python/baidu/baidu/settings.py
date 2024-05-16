@@ -1,4 +1,4 @@
-# Scrapy settings for touTiao project
+# Scrapy settings for baidu project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -7,14 +7,14 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = "touTiao"
+BOT_NAME = "baidu"
 
-SPIDER_MODULES = ["touTiao.spiders"]
-NEWSPIDER_MODULE = "touTiao.spiders"
+SPIDER_MODULES = ["baidu.spiders"]
+NEWSPIDER_MODULE = "baidu.spiders"
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = "touTiao (+http://www.yourdomain.com)"
+#USER_AGENT = "baidu (+http://www.yourdomain.com)"
 
 # Obey robots.txt rules
 # ROBOTSTXT_OBEY = True
@@ -45,13 +45,13 @@ NEWSPIDER_MODULE = "touTiao.spiders"
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
-#    "touTiao.middlewares.ToutiaoSpiderMiddleware": 543,
+#    "baidu.middlewares.BaiduSpiderMiddleware": 543,
 #}
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #DOWNLOADER_MIDDLEWARES = {
-#    "touTiao.middlewares.ToutiaoDownloaderMiddleware": 543,
+#    "baidu.middlewares.BaiduDownloaderMiddleware": 543,
 #}
 
 # Enable or disable extensions
@@ -63,7 +63,7 @@ NEWSPIDER_MODULE = "touTiao.spiders"
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 #ITEM_PIPELINES = {
-#    "touTiao.pipelines.ToutiaoPipeline": 300,
+#    "baidu.pipelines.BaiduPipeline": 300,
 #}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
